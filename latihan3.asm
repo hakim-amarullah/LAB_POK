@@ -1,5 +1,5 @@
 #Nama/NPM 	: Hakim Amarullah/1906293051
-#Kode Asdos 	: datapath
+#Kode Asdos 	: -
 #Program 	: Hitung Volume kubus
 .data
 	in : .asciiz "Berapa panjang sisinya? " #inisialisasi pesan input

@@ -1,10 +1,7 @@
 .data
-
-	date : .asciiz "Tanggal Lahir: "
 	bulan : .asciiz "Bulan Lahir: "
 	tahun : .asciiz "Tahun Lahir: "
-	newLine: .asciiz "\n"
-	msg: .asciiz "Saya berumur "
+	msg: .asciiz "\nSaya berumur "
 	msg2: .asciiz " tahun."
 	"MANUAL : Bulan $t0, Tahun $t1"
 .text
@@ -37,21 +34,13 @@
 		#lahir di bulan maret atau sebelumnya
 		birthOnMarch :
 				sub $t2, $v1, $t1 #Save age after (2021 - tahun input)
-				j Done
-				
-				
-				
+				j Done	
 		notOn12March :
 				sub $t2, $v1, $t1
 				sub $t2, $t2, 1 #Save age after 2021 - tahun input -1
 				j Done
 				
 	Done :
-		
-		li $v0, 4
-		la $a0, newLine #add newLine
-		syscall
-		
 		li $v0, 4
 		la $a0, msg #print "Saya berumur"
 		syscall

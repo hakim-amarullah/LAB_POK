@@ -12,6 +12,7 @@
 .def EW = r23 ; for PORTA
 .def PB = r24 ; for PORTB
 .def A  = r25
+.def count = r21
 
 ;====================================================================
 ; RESET and INTERRUPT VECTORS
@@ -25,14 +26,13 @@ rjmp MAIN
 ;====================================================================
 
 MAIN:
-
+sbi r18, 0
 INIT_STACK:
 	ldi temp, low(RAMEND)
 	ldi temp, high(RAMEND)
 	out SPH, temp
 
-rcall INIT_LCD_MAIN
-
+rjmp INIT_LCD_MAIN
 
 EXIT:
 	rjmp EXIT
@@ -51,19 +51,36 @@ INIT_LCD_MAIN:
 
 	rcall INPUT_TEXT
 
-LOADBYTE:
+LOADBYTE_PHASE1:
+	lpm ; Load byte from program memory into r0
+
+	cpi count, 7 ; Check if we've reached the end for the first line
+	breq PAUSE ; If so, change line
+
+	mov A, r0 ; Put the character onto Port B
+	rcall WRITE_TEXT
+	inc count
+	adiw ZL,1 ; Increase Z registers
+	rjmp LOADBYTE_PHASE1
+
+PAUSE:
+	rcall DELAY_02
+	rcall CLEAR_LCD
+	ldi count, 0
+
+LOADBYTE_PHASE2:
 	lpm ; Load byte from program memory into r0
 
 	tst r0 ; Check if we've reached the end of the message
-	breq END_LCD ; If so, quit
+	breq LOOP_LCD ; If so, quit
 
 	mov A, r0 ; Put the character onto Port B
 	rcall WRITE_TEXT
 	adiw ZL,1 ; Increase Z registers
-	rjmp LOADBYTE
+	rjmp LOADBYTE_PHASE2
 
-END_LCD:
-	ret
+LOOP_LCD:
+	rjmp MAIN
 
 INIT_LCD:
 	cbi PORTA,1 ; CLR RS
@@ -149,4 +166,4 @@ DELAY_02:				; Delay 160 000 cycles
 ;====================================================================
 
 message:
-.db "Hakim EZPZ",0
+.db 190, 221, 195, 210, 176, 196, 217, "the peggies", 0

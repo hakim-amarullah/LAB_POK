@@ -34,7 +34,7 @@ INIT_STACK:
 INIT_LED:
 
 	ser temp ; load $FF to temp
-	out DDRC,temp ; Set PORTA to output
+	out DDRC,temp ; Set PORTC to output
 
 INIT_INTERRUPT:
 	ldi temp,0b00000010
@@ -74,7 +74,7 @@ LED_LOOP:
 	rjmp LED_LOOP
 
 ext_int0:
-	sbis	PIND, 4			; use Button 2 to continue
+	sbis	PIND, 4	; use Button 2 to continue
 	rjmp	ext_int0
 	reti
 
